@@ -22,9 +22,9 @@ public class HelloController {
     public HelloController(ChatClient.Builder chatClientBuilder) {
         this.chatClient = chatClientBuilder
                 .defaultSystem(DEFAULT_PROMPT)
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().build()).build())//对话内容存在内存
                 // 实现 Logger 的 Advisor
                 .defaultAdvisors(new SimpleLoggerAdvisor())
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().build()).build())//对话内容存在内存
                 // 设置 ChatClient 中 ChatModel 的 Options 参数
                 .defaultOptions(DashScopeChatOptions.builder().withTopP(0.7).build()).build();
     }
