@@ -20,6 +20,8 @@
         <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
         <spring-ai.version>1.0.0</spring-ai.version>
         <spring-ai-alibaba.version>1.0.0.2</spring-ai-alibaba.version>
+<!--        <es.version>8.17.4</es.version>-->
+       <es.version>8.14.3</es.version>
     </properties>
 
     <dependencyManagement>
@@ -39,12 +41,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
 
     <dependencies>
+
 
 
         <dependency>
@@ -69,6 +71,23 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-vector-store-redis</artifactId>
+        </dependency>
+
+        <!-- es 向量库 -->
+        <dependency>
+            <groupId>org.springframework.ai
+            </groupId>
+            <artifactId>spring-ai-starter-vector-store-elasticsearch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>co.elastic.clients</groupId>
+            <artifactId>elasticsearch-java</artifactId>
+            <version>${es.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
+            <version>${es.version}</version>
         </dependency>
 
         <dependency>
