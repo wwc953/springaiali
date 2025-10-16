@@ -24,5 +24,19 @@ services:
 #      - 5601:5601
 #    depends_on:
 #      - elasticsearch
+
+  redis-stack:
+    image: redis/redis-stack:latest
+    ports:
+      - "6379:6379"
+      - "18001:8001"
+    volumes:
+      - ./redis/data:/data
+    environment:
+      TZ: Asia/Shanghai
+      # Optional: Set a password for Redis
+      # - REDIS_ARGS="--requirepass your_strong_password"
+      # Optional: Configure RedisInsight password
+      # - REDISINSIGHT_PASSWORD=your_insight_password
 volumes:
   esdata:
