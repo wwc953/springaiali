@@ -38,5 +38,26 @@ services:
       # - REDIS_ARGS="--requirepass your_strong_password"
       # Optional: Configure RedisInsight password
       # - REDISINSIGHT_PASSWORD=your_insight_password
+
+  pgvecto-rs:
+    image: tensorchord/pgvecto-rs:pg16-v0.3.0
+    profiles:
+      - ./pgvecto-rs
+    ports:
+      - "5432:5432"
+#    restart: always
+    environment:
+      PGUSER: postgres
+      POSTGRES_PASSWORD: difyai123456
+      POSTGRES_DB: dify
+      # postgres data directory
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./volumes/pgvecto_rs/data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 1s
+      timeout: 3s
+      retries: 30
 volumes:
   esdata:

@@ -32,3 +32,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/src/main/resources/docker-ai/volumes/pgvecto_rs/data/pgdata/
