@@ -49,7 +49,7 @@ public class RedisController {
         return redisVectorStoreCustom.similaritySearch(SearchRequest
                 .builder()
                 .query(str)
-                .topK(2)
+                .topK(5)
                 .build());
     }
 
