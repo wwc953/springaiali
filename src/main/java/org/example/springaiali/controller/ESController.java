@@ -1,5 +1,6 @@
 package org.example.springaiali.controller;
 
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.document.Document;
@@ -22,7 +23,7 @@ import java.util.Map;
 @RequestMapping("/es")
 public class ESController {
 
-    @Autowired
+    @Autowired(required = false)
     ElasticsearchVectorStore elasticsearchVectorStore;
 
 

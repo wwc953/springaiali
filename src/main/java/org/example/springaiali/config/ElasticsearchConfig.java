@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-//@ConditionalOnProperty(name = "vectorstore.type", havingValue = "es")
+@ConditionalOnProperty(name = "vectorstore.type", havingValue = "es")
 public class ElasticsearchConfig {
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchConfig.class);
 

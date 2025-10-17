@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import redis.clients.jedis.JedisPooled;
 
 @Configuration
-//@ConditionalOnProperty(name = "vectorstore.type", havingValue = "redis")
+@ConditionalOnProperty(name = "vectorstore.type", havingValue = "redis")
 public class RedisConfig {
     private static final Logger logger = LoggerFactory.getLogger(RedisConfig.class);
 

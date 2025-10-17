@@ -1,13 +1,13 @@
 package org.example.springaiali.controller;
 
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.elasticsearch.ElasticsearchVectorStore;
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
-import org.springframework.ai.vectorstore.redis.RedisVectorStore;
+import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,10 +20,12 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/redis")
-public class RedisController {
+@RequestMapping("/pg")
+public class PGController {
+
     @Autowired(required = false)
-    RedisVectorStore redisVectorStoreCustom;
+    PgVectorStore pgVectorStore;
+
 
     @GetMapping("/import")
     public void importData() {
@@ -38,7 +40,7 @@ public class RedisController {
                 new Document("世界很大，救赎就在眼前"),
                 new Document("你面向过去向前走，然后又转身面向未来。", Map.of("year", 2024)),
                 new Document("Spring AI 太棒了！！Spring AI 太棒了！！Spring AI 太棒了！！", map));
-        redisVectorStoreCustom.add(documents);
+        pgVectorStore.add(documents);
     }
 
     @GetMapping("/search/{str}")
@@ -47,23 +49,24 @@ public class RedisController {
             str = "Spring";
         }
         log.info("start search data: {}", str);
-        return redisVectorStoreCustom.similaritySearch(SearchRequest
+        return pgVectorStore.similaritySearch(SearchRequest
                 .builder()
                 .query(str)
-                .topK(5)
+                .topK(2)
                 .build());
     }
 
     @GetMapping("/delete-filter")
-    public void deleteFilter() {
-        log.info("start delete data with filter");
-        FilterExpressionBuilder filterExpressionBuilder = new FilterExpressionBuilder();
-        Filter.Expression expression = filterExpressionBuilder.eq("name", "yingzi").build();
+    public void searchFilter() {
+        FilterExpressionBuilder b = new FilterExpressionBuilder();
+//        Filter.Expression expression = b.and(
+//                b.in("year", 2025, 2024),
+//                b.eq("name", "yingzi")
+//        ).build();
+        Filter.Expression expression = b.eq("name", "yingzi").build();
 
-        redisVectorStoreCustom.delete(expression);
+        pgVectorStore.delete(expression);
     }
-
-
 
 
 }
