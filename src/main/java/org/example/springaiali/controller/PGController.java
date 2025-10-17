@@ -9,10 +9,7 @@ import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,34 +33,29 @@ public class PGController {
         map.put("year", "2025");
         map.put("name", "yingzi");
 
-        List<Document> documents = List.of(
-                new Document("世界很大，救赎就在眼前"),
+        List<Document> documents = List.of(new Document("世界很大，救赎就在眼前"),
                 new Document("你面向过去向前走，然后又转身面向未来。", Map.of("year", 2024)),
                 new Document("Spring AI 太棒了！！Spring AI 太棒了！！Spring AI 太棒了！！", map));
         pgVectorStore.add(documents);
     }
 
-    @GetMapping("/search/{str}")
-    public List<Document> search(@PathVariable String str) {
-        if (StringUtils.isBlank(str)) {
-            str = "Spring";
+    @GetMapping("/search/{query}")
+    public List<Document> search(@PathVariable String query, @RequestParam(required = false, defaultValue = "0.0") Double threshold, @RequestParam(required = false, defaultValue = "2") Integer topK) {
+        log.info("start search threshold {}, topK:{} , query: {}", threshold, topK, query);
+        SearchRequest.Builder sbuild = SearchRequest.builder();
+        if (threshold != null) {
+            sbuild.similarityThreshold(threshold);//介于 0 到 1 之间的双精度值，值越接近 1，相似度越高。默认情况下，例如，如果您将阈值设置为 0.75，则仅返回相似度高于此值的文档
         }
-        log.info("start search data: {}", str);
-        return pgVectorStore.similaritySearch(SearchRequest
-                .builder()
-                .query(str)
-                .topK(2)
-                .build());
+        SearchRequest searchRequest = sbuild.query(query).topK(topK)//K 个最近邻
+                .build();
+        return pgVectorStore.similaritySearch(searchRequest);
     }
 
     @GetMapping("/delete-filter")
     public void searchFilter() {
         FilterExpressionBuilder b = new FilterExpressionBuilder();
-//        Filter.Expression expression = b.and(
-//                b.in("year", 2025, 2024),
-//                b.eq("name", "yingzi")
-//        ).build();
-        Filter.Expression expression = b.eq("name", "yingzi").build();
+        Filter.Expression expression = b.and(b.in("year", 2025, 2024), b.eq("name", "yingzi")).build();
+//        Filter.Expression expression = b.eq("name", "yingzi").build();
 
         pgVectorStore.delete(expression);
     }

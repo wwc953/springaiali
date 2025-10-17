@@ -45,9 +45,6 @@ public class ESController {
 
     @GetMapping("/search/{str}")
     public List<Document> search(@PathVariable String str) {
-        if (StringUtils.isBlank(str)) {
-            str = "Spring";
-        }
         log.info("start search data: {}", str);
         return elasticsearchVectorStore.similaritySearch(SearchRequest
                 .builder()

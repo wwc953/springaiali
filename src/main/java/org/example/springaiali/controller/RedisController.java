@@ -43,9 +43,6 @@ public class RedisController {
 
     @GetMapping("/search/{str}")
     public List<Document> search(@PathVariable String str) {
-        if (StringUtils.isBlank(str)) {
-            str = "Spring";
-        }
         log.info("start search data: {}", str);
         return redisVectorStoreCustom.similaritySearch(SearchRequest
                 .builder()
