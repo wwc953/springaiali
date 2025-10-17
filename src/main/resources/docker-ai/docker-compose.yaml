@@ -31,7 +31,7 @@ services:
       - "6379:6379"
       - "18001:8001"
     volumes:
-      - ./redis/data:/data
+      - rddata:/data
     environment:
       TZ: Asia/Shanghai
       # Optional: Set a password for Redis
@@ -40,24 +40,24 @@ services:
       # - REDISINSIGHT_PASSWORD=your_insight_password
 
   pgvecto-rs:
-    image: tensorchord/pgvecto-rs:pg16-v0.3.0
-    profiles:
-      - ./pgvecto-rs
+    image: pgvector/pgvector:pg16 #内置 PostgreSQL 16 + pgvector 插件。
+    container_name: pgvector-db
     ports:
       - "5432:5432"
 #    restart: always
     environment:
       PGUSER: postgres
-      POSTGRES_PASSWORD: difyai123456
-      POSTGRES_DB: dify
-      # postgres data directory
-      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
     volumes:
-      - ./volumes/pgvecto_rs/data:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD", "pg_isready" ]
-      interval: 1s
-      timeout: 3s
-      retries: 30
+#      - ./volumes/pgvecto_rs/data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
+#    healthcheck:
+#      test: [ "CMD", "pg_isready" ]
+#      interval: 1s
+#      timeout: 3s
+#      retries: 30
 volumes:
   esdata:
+  pgdata:
+  rddata:
