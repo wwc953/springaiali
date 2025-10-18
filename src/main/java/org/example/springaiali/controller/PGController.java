@@ -51,6 +51,18 @@ public class PGController {
         return pgVectorStore.similaritySearch(searchRequest);
     }
 
+
+    @GetMapping("/search/filter/{query}")
+    public List<Document> searchF(@PathVariable String query) {
+        log.info("start search  filter : {}", query);
+        SearchRequest searchRequest = SearchRequest.builder()
+                .query(query)
+                .topK(2)
+                .filterExpression("year in [2025, 2024] && name == 'yingzi'")
+                .build();
+        return pgVectorStore.similaritySearch(searchRequest);
+    }
+
     @GetMapping("/delete-filter")
     public void searchFilter() {
         FilterExpressionBuilder b = new FilterExpressionBuilder();
