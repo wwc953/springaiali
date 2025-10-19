@@ -1,5 +1,10 @@
 package org.example.springaiali.config;
 
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.ChatMemoryRepository;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
+import org.springframework.ai.chat.memory.repository.jdbc.PostgresChatMemoryRepositoryDialect;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,4 +32,25 @@ public class PgConfig {
                 .maxDocumentBatchSize(10000)         // Optional: defaults to 10000
                 .build();
     }
+
+
+    @Bean
+    public ChatMemoryRepository postgresChatMemoryRepository(JdbcTemplate jdbcTemplate) {
+        ChatMemoryRepository chatMemoryRepository = JdbcChatMemoryRepository.builder()
+                .jdbcTemplate(jdbcTemplate)
+                .dialect(new PostgresChatMemoryRepositoryDialect())
+                .build();
+        return chatMemoryRepository;
+    }
+
+    @Bean
+    public ChatMemory postgresChatMemory(ChatMemoryRepository postgresChatMemoryRepository) {
+        MessageWindowChatMemory chatMemory = MessageWindowChatMemory.builder()
+                .chatMemoryRepository(postgresChatMemoryRepository)
+                .maxMessages(15)
+                .build();
+        return chatMemory;
+
+    }
+
 }

@@ -48,9 +48,9 @@ public class BaseController {
     /**
      * ChatClient 使用自定义的 Advisor 实现功能增强.
      * eg:
-     * http://127.0.0.1:8080/advisor/chat/123?query=你好，我叫jack，之后的会话中都带上我的名字
+     * http://127.0.0.1:8080/base/advisor/chat/123?query=你好，我叫jack，之后的会话中都带上我的名字
      * 你好，jack！很高兴认识你。在接下来的对话中，我会记得带上你的名字。有什么想聊的吗？
-     * http://127.0.0.1:8080/advisor/chat/123?query=我叫什么名字？
+     * http://127.0.0.1:8080/base/advisor/chat/123?query=我叫什么名字？
      * 你叫jack呀。有什么事情想要分享或者讨论吗，jack？
      * <p>
      * refer: https://docs.spring.io/spring-ai/reference/api/chat-memory.html#_memory_in_chat_client

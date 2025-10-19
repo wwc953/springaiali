@@ -1,14 +1,16 @@
 package org.example.springaiali.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.reader.markdown.MarkdownDocumentReader;
+import org.springframework.ai.reader.markdown.config.MarkdownDocumentReaderConfig;
 import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.elasticsearch.ElasticsearchVectorStore;
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -72,5 +74,24 @@ public class PGController {
         pgVectorStore.delete(expression);
     }
 
+
+    @Value("classpath:doc/code.md")
+    Resource resource;
+
+    /**
+     * 导入md文件
+     */
+    @GetMapping("/importMd")
+    public void importMd() {
+        MarkdownDocumentReaderConfig config = MarkdownDocumentReaderConfig.builder()
+                .withHorizontalRuleCreateDocument(true)
+                .withIncludeCodeBlock(false)
+                .withIncludeBlockquote(false)
+                .withAdditionalMetadata("filename", "code.md")
+                .build();
+        MarkdownDocumentReader reader = new MarkdownDocumentReader(this.resource, config);
+        List<Document> documents = reader.get();
+        pgVectorStore.add(documents);
+    }
 
 }
