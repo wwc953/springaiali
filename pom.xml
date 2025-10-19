@@ -124,18 +124,20 @@
         </dependency>
 
         <!--记忆-->
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>
-        </dependency>
+<!--        spring ai  方式-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.ai</groupId>-->
+<!--            <artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>-->
+<!--        </dependency>-->
 <!--        <dependency>-->
 <!--            <groupId>com.alibaba.cloud.ai</groupId>-->
 <!--            <artifactId>spring-ai-alibaba-starter-memory</artifactId>-->
 <!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.alibaba.cloud.ai</groupId>-->
-<!--            <artifactId>spring-ai-alibaba-starter-memory-jdbc</artifactId>-->
-<!--        </dependency>-->
+<!--        spring ai ali 方式-->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter-memory-jdbc</artifactId>
+        </dependency>
 
     </dependencies>
 

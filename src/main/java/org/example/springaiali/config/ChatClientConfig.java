@@ -24,7 +24,7 @@ public class ChatClientConfig {
                 .defaultSystem(DEFAULT_PROMPT)
                 // 实现 Logger 的 Advisor
                 .defaultAdvisors(new SimpleLoggerAdvisor())
-//                .defaultAdvisors(MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().build()).build())//对话内容存在内存
+//                .defaultAdvisors(MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().build()).build())//对话内容存在内存MessageWindowChatMemory.builder().build()
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(postgresChatMemory).build())
                 // 设置 ChatClient 中 ChatModel 的 Options 参数
 //        chatModel.getDashScopeChatOptions()

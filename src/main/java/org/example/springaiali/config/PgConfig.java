@@ -1,5 +1,7 @@
 package org.example.springaiali.config;
 
+import com.alibaba.cloud.ai.memory.jdbc.MysqlChatMemoryRepository;
+import com.alibaba.cloud.ai.memory.jdbc.PostgresChatMemoryRepository;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
@@ -12,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
 @ConditionalOnProperty(name = "vectorstore.type", havingValue = "pg")
@@ -34,14 +37,36 @@ public class PgConfig {
     }
 
 
+    /**
+     * spring ai 方式
+     * #spring.ai.chat.memory.repository.jdbc.initialize-schema=always
+     * #spring.ai.chat.memory.repository.jdbc.schema=classpath:/static/pg.sql
+     * @param jdbcTemplate
+     * @return
+     */
+//    @Bean
+//    public ChatMemoryRepository postgresChatMemoryRepository(JdbcTemplate jdbcTemplate) {
+//        ChatMemoryRepository chatMemoryRepository = JdbcChatMemoryRepository.builder()
+//                .jdbcTemplate(jdbcTemplate)
+//                .dialect(new PostgresChatMemoryRepositoryDialect())
+//                .build();
+//        return chatMemoryRepository;
+//    }
+//
+
+    /**
+     * spring ai ali 方式
+     * @param jdbcTemplate
+     * @return
+     */
     @Bean
-    public ChatMemoryRepository postgresChatMemoryRepository(JdbcTemplate jdbcTemplate) {
-        ChatMemoryRepository chatMemoryRepository = JdbcChatMemoryRepository.builder()
+    public PostgresChatMemoryRepository postgresChatMemoryRepository(JdbcTemplate jdbcTemplate) {
+        PostgresChatMemoryRepository postgresChatMemoryRepository = PostgresChatMemoryRepository.postgresBuilder()
                 .jdbcTemplate(jdbcTemplate)
-                .dialect(new PostgresChatMemoryRepositoryDialect())
                 .build();
-        return chatMemoryRepository;
+        return postgresChatMemoryRepository;
     }
+
 
     @Bean
     public ChatMemory postgresChatMemory(ChatMemoryRepository postgresChatMemoryRepository) {
