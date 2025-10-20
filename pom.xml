@@ -139,6 +139,12 @@
             <artifactId>spring-ai-alibaba-starter-memory-jdbc</artifactId>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-advisors-vector-store</artifactId>
+        </dependency>
+
     </dependencies>
 
 
