@@ -1,0 +1,24 @@
+{
+  "properties": {
+    "embedding_text": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "embedding": {
+      "type": "dense_vector",
+      "dims": 1536,
+      "similarity": "cosine",
+      "index_options": {
+        "type": "int8_hnsw",
+        "m": 16,
+        "ef_construction": 100
+      },
+      "index": "true"
+    }
+  }
+}
