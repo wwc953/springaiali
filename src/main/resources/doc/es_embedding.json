@@ -11,12 +11,12 @@
     },
     "embedding": {
       "type": "dense_vector",
-      "dims": 1536,
+      "dims": 1536, //向量维度,需与向量模型一致
       "similarity": "cosine",
-      "index_options": {
-        "type": "int8_hnsw",
-        "m": 16,
-        "ef_construction": 100
+      "index_options": { //配置KNN索引算法,仅当index为true才能指定该参数
+        "type": "int8_hnsw", //KNN索引算法类型
+        "m": 16, //HNSW 图中每个节点将连接的邻居数量。默认为16
+        "ef_construction": 100 //为每个新节点构建最近邻列表时要跟踪的候选节点数量。默认为100
       },
       "index": "true"
     }
