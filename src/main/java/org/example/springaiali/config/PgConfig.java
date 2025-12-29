@@ -1,7 +1,13 @@
 package org.example.springaiali.config;
 
+import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
+import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
 import com.alibaba.cloud.ai.memory.jdbc.MysqlChatMemoryRepository;
 import com.alibaba.cloud.ai.memory.jdbc.PostgresChatMemoryRepository;
+import jakarta.annotation.Resource;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
@@ -23,6 +29,13 @@ public class PgConfig {
     @Value("${spring.ai.vectorstore.pgvector.initialize-schema}")
     private Boolean initializeSchema;
 
+    /**
+     * 向量存储
+     *
+     * @param jdbcTemplate
+     * @param embeddingModel
+     * @return
+     */
     @Bean
     public PgVectorStore pgVectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel) {
         return PgVectorStore.builder(jdbcTemplate, embeddingModel)
@@ -36,46 +49,31 @@ public class PgConfig {
                 .build();
     }
 
-
-    /**
-     * spring ai 方式
-     * #spring.ai.chat.memory.repository.jdbc.initialize-schema=always
-     * #spring.ai.chat.memory.repository.jdbc.schema=classpath:/static/pg.sql
-     * @param jdbcTemplate
-     * @return
-     */
-//    @Bean
-//    public ChatMemoryRepository postgresChatMemoryRepository(JdbcTemplate jdbcTemplate) {
-//        ChatMemoryRepository chatMemoryRepository = JdbcChatMemoryRepository.builder()
-//                .jdbcTemplate(jdbcTemplate)
-//                .dialect(new PostgresChatMemoryRepositoryDialect())
-//                .build();
-//        return chatMemoryRepository;
-//    }
-//
-
-    /**
-     * spring ai ali 方式
-     * @param jdbcTemplate
-     * @return
-     */
     @Bean
     public PostgresChatMemoryRepository postgresChatMemoryRepository(JdbcTemplate jdbcTemplate) {
-        PostgresChatMemoryRepository postgresChatMemoryRepository = PostgresChatMemoryRepository.postgresBuilder()
+        return PostgresChatMemoryRepository.postgresBuilder()
                 .jdbcTemplate(jdbcTemplate)
                 .build();
-        return postgresChatMemoryRepository;
     }
 
 
     @Bean
     public ChatMemory postgresChatMemory(ChatMemoryRepository postgresChatMemoryRepository) {
-        MessageWindowChatMemory chatMemory = MessageWindowChatMemory.builder()
+        return MessageWindowChatMemory.builder()
                 .chatMemoryRepository(postgresChatMemoryRepository)
                 .maxMessages(15)
                 .build();
-        return chatMemory;
+    }
 
+
+    @Bean
+    public ChatClient dashScopeChatClient(DashScopeChatModel chatModel, ChatMemory postgresChatMemory) {
+        return ChatClient.builder(chatModel)
+                .defaultSystem(Prom.DEFAULT_PROMPT)
+                .defaultAdvisors(new SimpleLoggerAdvisor())
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(postgresChatMemory).build())
+                .defaultOptions(DashScopeChatOptions.builder().topP(0.7).build())
+                .build();
     }
 
 }

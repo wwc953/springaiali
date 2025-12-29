@@ -1,6 +1,10 @@
 package org.example.springaiali.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.example.springaiali.service.ToolsServer;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.markdown.MarkdownDocumentReader;
 import org.springframework.ai.reader.markdown.config.MarkdownDocumentReaderConfig;
@@ -8,10 +12,10 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,14 +26,42 @@ import java.util.Map;
 @RequestMapping("/pg")
 public class PGController {
 
-    @Autowired(required = false)
+
+    @jakarta.annotation.Resource
     PgVectorStore pgVectorStore;
+
+
+    @jakarta.annotation.Resource
+    ChatClient chatClient;
+
+    @jakarta.annotation.Resource
+    ToolsServer toolsServer;
+
+    /**
+     * ChatClient 使用自定义的 Advisor 实现功能增强.
+     * eg:
+     * http://127.0.0.1:8080/pg/advisor/chat/123?query=你好，我叫jack，之后的会话中都带上我的名字
+     * 你好，jack！很高兴认识你。在接下来的对话中，我会记得带上你的名字。有什么想聊的吗？
+     * http://127.0.0.1:8080/pg/advisor/chat/123?query=我叫什么名字？
+     * 你叫jack呀。有什么事情想要分享或者讨论吗，jack？
+     * <p>
+     * refer: https://docs.spring.io/spring-ai/reference/api/chat-memory.html#_memory_in_chat_client
+     */
+    @GetMapping("/advisor/chat/{conversationId}")
+    public Flux<String> advisorChat(@PathVariable String conversationId,
+                                    @RequestParam String query,
+                                    HttpServletResponse response) {
+        response.setCharacterEncoding("UTF-8");
+        return this.chatClient.prompt(query)
+                .tools(toolsServer)
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+                .stream().content();
+    }
 
 
     @GetMapping("/import")
     public void importData() {
         log.info("start import data");
-
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", "12345");
         map.put("year", "2025");
@@ -70,7 +102,6 @@ public class PGController {
         FilterExpressionBuilder b = new FilterExpressionBuilder();
         Filter.Expression expression = b.and(b.in("year", 2025, 2024), b.eq("name", "yingzi")).build();
 //        Filter.Expression expression = b.eq("name", "yingzi").build();
-
         pgVectorStore.delete(expression);
     }
 
