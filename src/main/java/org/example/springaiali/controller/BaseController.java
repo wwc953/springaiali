@@ -1,8 +1,11 @@
 package org.example.springaiali.controller;
 
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
+import jakarta.annotation.Resource;
+import jakarta.annotation.Resources;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.example.springaiali.service.ToolsServer;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -10,6 +13,7 @@ import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +49,9 @@ public class BaseController {
         return chatClient.prompt(query).stream().content();
     }
 
+//    @Resource
+//    ToolsServer toolsServer;
+
     /**
      * ChatClient 使用自定义的 Advisor 实现功能增强.
      * eg:
@@ -61,7 +68,8 @@ public class BaseController {
                                     HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
         return this.chatClient.prompt(query)
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+//                .tools(toolsServer)
+                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .stream().content();
     }
 
