@@ -59,7 +59,7 @@ public class PGController {
                                     @RequestParam String query,
                                     HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
-        ConfigurablePromptTemplate template = configurablePromptTemplateFactory.create("test-template", "列出 {author} 有10个著作");
+        ConfigurablePromptTemplate template = configurablePromptTemplateFactory.create("test-template", "");
         Prompt prompt = null;
         if (StringUtils.isNotBlank(query)) {
             prompt = template.create(Map.of("author", query));
