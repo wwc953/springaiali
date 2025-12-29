@@ -21,6 +21,7 @@
 
     <modules>
         <module>ai-chat</module>
+        <module>mcp-server</module>
     </modules>
 
     <dependencyManagement>
