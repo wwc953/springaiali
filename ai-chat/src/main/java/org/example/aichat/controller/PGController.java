@@ -1,4 +1,4 @@
-package org.example.springaiali.controller;
+package org.example.aichat.controller;
 
 import com.alibaba.cloud.ai.prompt.ConfigurablePromptTemplate;
 import com.alibaba.cloud.ai.prompt.ConfigurablePromptTemplateFactory;
@@ -6,7 +6,8 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.example.springaiali.service.ToolsServer;
+
+import org.example.aichat.service.ToolsServer;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -112,13 +113,13 @@ public class PGController {
         return pgVectorStore.similaritySearch(searchRequest);
     }
 
-    @GetMapping("/delete-filter")
-    public void searchFilter() {
-        FilterExpressionBuilder b = new FilterExpressionBuilder();
-        Filter.Expression expression = b.and(b.in("year", 2025, 2024), b.eq("name", "yingzi")).build();
-//        Filter.Expression expression = b.eq("name", "yingzi").build();
-        pgVectorStore.delete(expression);
-    }
+//    @GetMapping("/delete-filter")
+//    public void searchFilter() {
+//        FilterExpressionBuilder b = new FilterExpressionBuilder();
+//        Filter.Expression expression = b.and(b.in("year", 2025, 2024), b.eq("name", "yingzi")).build();
+////        Filter.Expression expression = b.eq("name", "yingzi").build();
+//        pgVectorStore.delete(expression);
+//    }
 
 
 //    @Value("classpath:doc/code.md")

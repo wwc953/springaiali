@@ -1,13 +1,13 @@
-package org.example.springaiali;
+package org.example.aichat;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringaialiApplication {
+public class AiChatApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringaialiApplication.class, args);
+        SpringApplication.run(AiChatApplication.class, args);
     }
 
 }

@@ -1,4 +1,4 @@
-package org.example.springaiali.config;
+package org.example.aichat.config;
 
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
