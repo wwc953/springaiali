@@ -15,7 +15,7 @@ public class ToolsServer {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
-    @Tool(description = "获取地区天气情况",returnDirect = true)
+    @Tool(description = "获取地区天气情况")
     public String getWeaByCity(@ToolParam(description = "城市") String city) {
         String res = "";
         if ("上海".equals(city)) {

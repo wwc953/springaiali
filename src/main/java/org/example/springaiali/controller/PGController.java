@@ -1,10 +1,15 @@
 package org.example.springaiali.controller;
 
+import com.alibaba.cloud.ai.prompt.ConfigurablePromptTemplate;
+import com.alibaba.cloud.ai.prompt.ConfigurablePromptTemplateFactory;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.example.springaiali.service.ToolsServer;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.markdown.MarkdownDocumentReader;
 import org.springframework.ai.reader.markdown.config.MarkdownDocumentReaderConfig;
@@ -13,7 +18,6 @@ import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
@@ -27,22 +31,25 @@ import java.util.Map;
 public class PGController {
 
 
-    @jakarta.annotation.Resource
+    @Resource
     PgVectorStore pgVectorStore;
 
 
-    @jakarta.annotation.Resource
+    @Resource
     ChatClient chatClient;
 
-    @jakarta.annotation.Resource
+    @Resource
     ToolsServer toolsServer;
+
+    @Resource
+    ConfigurablePromptTemplateFactory configurablePromptTemplateFactory;
 
     /**
      * ChatClient 使用自定义的 Advisor 实现功能增强.
      * eg:
-     * http://127.0.0.1:8080/pg/advisor/chat/123?query=你好，我叫jack，之后的会话中都带上我的名字
+     * http://127.0.0.1:18080/pg/advisor/chat/123?query=你好，我叫jack，之后的会话中都带上我的名字
      * 你好，jack！很高兴认识你。在接下来的对话中，我会记得带上你的名字。有什么想聊的吗？
-     * http://127.0.0.1:8080/pg/advisor/chat/123?query=我叫什么名字？
+     * http://127.0.0.1:18080/pg/advisor/chat/123?query=我叫什么名字？
      * 你叫jack呀。有什么事情想要分享或者讨论吗，jack？
      * <p>
      * refer: https://docs.spring.io/spring-ai/reference/api/chat-memory.html#_memory_in_chat_client
@@ -52,7 +59,15 @@ public class PGController {
                                     @RequestParam String query,
                                     HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
-        return this.chatClient.prompt(query)
+        ConfigurablePromptTemplate template = configurablePromptTemplateFactory.create("test-template", "列出 {author} 有10个著作");
+        Prompt prompt = null;
+        if (StringUtils.isNotBlank(query)) {
+            prompt = template.create(Map.of("author", query));
+        } else {
+            prompt = template.create();
+        }
+        log.info("prompt===>{}", prompt.getContents());
+        return chatClient.prompt(prompt)
                 .tools(toolsServer)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .stream().content();
@@ -106,23 +121,23 @@ public class PGController {
     }
 
 
-    @Value("classpath:doc/code.md")
-    Resource resource;
-
-    /**
-     * 导入md文件
-     */
-    @GetMapping("/importMd")
-    public void importMd() {
-        MarkdownDocumentReaderConfig config = MarkdownDocumentReaderConfig.builder()
-                .withHorizontalRuleCreateDocument(true)
-                .withIncludeCodeBlock(false)
-                .withIncludeBlockquote(false)
-                .withAdditionalMetadata("filename", "code.md")
-                .build();
-        MarkdownDocumentReader reader = new MarkdownDocumentReader(this.resource, config);
-        List<Document> documents = reader.get();
-        pgVectorStore.add(documents);
-    }
+//    @Value("classpath:doc/code.md")
+//    Resource resource;
+//
+//    /**
+//     * 导入md文件
+//     */
+//    @GetMapping("/importMd")
+//    public void importMd() {
+//        MarkdownDocumentReaderConfig config = MarkdownDocumentReaderConfig.builder()
+//                .withHorizontalRuleCreateDocument(true)
+//                .withIncludeCodeBlock(false)
+//                .withIncludeBlockquote(false)
+//                .withAdditionalMetadata("filename", "code.md")
+//                .build();
+//        MarkdownDocumentReader reader = new MarkdownDocumentReader(this.resource, config);
+//        List<Document> documents = reader.get();
+//        pgVectorStore.add(documents);
+//    }
 
 }

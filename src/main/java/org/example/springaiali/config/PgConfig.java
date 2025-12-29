@@ -4,7 +4,10 @@ import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
 import com.alibaba.cloud.ai.memory.jdbc.MysqlChatMemoryRepository;
 import com.alibaba.cloud.ai.memory.jdbc.PostgresChatMemoryRepository;
+import com.alibaba.cloud.ai.prompt.ConfigurablePromptTemplate;
+import com.alibaba.cloud.ai.prompt.ConfigurablePromptTemplateFactory;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -13,6 +16,7 @@ import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.memory.repository.jdbc.PostgresChatMemoryRepositoryDialect;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +26,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import java.util.Map;
+
+@Slf4j
 @Configuration
 @ConditionalOnProperty(name = "vectorstore.type", havingValue = "pg")
 public class PgConfig {
@@ -67,7 +74,7 @@ public class PgConfig {
 
 
     @Bean
-    public ChatClient dashScopeChatClient(DashScopeChatModel chatModel, ChatMemory postgresChatMemory) {
+    public ChatClient dashScopeChatClient(DashScopeChatModel chatModel, ChatMemory postgresChatMemory ) {
         return ChatClient.builder(chatModel)
                 .defaultSystem(Prom.DEFAULT_PROMPT)
                 .defaultAdvisors(new SimpleLoggerAdvisor())
