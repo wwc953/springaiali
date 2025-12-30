@@ -4,6 +4,9 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Service
 public class TimeService {
 
@@ -44,6 +47,23 @@ public class TimeService {
                 "- PM10: 28 μg/m³ (良)\n" +
                 "- 空气质量指数(AQI): 42 (优)\n" +
                 "- 主要污染物: 无";
+    }
+
+    @Tool(description = "获取当前时间")
+    public String getCurrTime() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    @Tool(description = "获取地区天气情况")
+    public String getWeaByCity(@ToolParam(description = "城市") String city) {
+        String res = "";
+        if ("上海".equals(city)) {
+            res = "晴天";
+        }
+        if ("南京".equals(city)) {
+            res = "多云";
+        }
+        return res;
     }
 
 }
