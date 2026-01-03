@@ -18,16 +18,17 @@ services:
 
   # Higress AI Cache Use
   redis:
-    image: redis
+#    image: redis
+    image: higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/redis-stack-server:7.4.0-v3
     ports:
       - "6379:6379"
     environment:
       - TZ=Asia/Shanghai
     container_name: higress-redis
-    volumes:
-      - /d/docker-data/redis/data:/data
-      - ./conf/redis.conf:/etc/redis/redis-stand.conf
-    command: redis-server /etc/redis/redis-stand.conf
+#    volumes:
+#      - /d/docker-data/redis/data:/data
+#      - ./conf/redis.conf:/etc/redis/redis-stand.conf
+#    command: redis-server /etc/redis/redis-stand.conf
     networks:
         - spring-ai-alibaba-higress
 
@@ -47,7 +48,8 @@ services:
       - spring-ai-alibaba-higress
 
   nacos:
-    image: nacos/nacos-server:v3.1.1
+#    image: nacos/nacos-server:v3.1.1
+    image: nacos-registry.cn-hangzhou.cr.aliyuncs.com/nacos/nacos-server:v3.0.1
     container_name: nacos-standalone-3.1.1
     environment:
       - PREFER_HOST_MODE=hostname
