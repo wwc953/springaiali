@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+ pgvecto-rs:
+    image: pgvector/pgvector:pg16 #内置 PostgreSQL 16 + pgvector 插件。
+    container_name: pgvector-db
+    ports:
+      - "5432:5432"
+#    restart: always
+    environment:
+      PGUSER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+    volumes:
+      - /d/docker-data/pgvecto_rs:/var/lib/postgresql/data

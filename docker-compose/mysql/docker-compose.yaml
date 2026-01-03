@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql8
+    ports:
+      - '13306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      TZ: Asia/Shanghai
+    volumes:
+      - ./conf/my.cnf:/etc/my.cnf
+      - /d/docker-data/mysql:/var/lib/mysql #数据挂在D盘
+      - ./init-scripts:/docker-entrypoint-initdb.d # 所有脚本按字母顺序执行
