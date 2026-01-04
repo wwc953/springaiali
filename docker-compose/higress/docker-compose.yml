@@ -66,6 +66,27 @@ services:
     networks:
       - spring-ai-alibaba-higress
 
+#  prometheus:
+#    container_name: prometheus
+#    image: prom/prometheus:latest
+#    ports:
+#      - "9090:9090"
+##    depends_on:
+##      - higress
+#    networks:
+#      - spring-ai-alibaba-higress
+#  grafana:
+#    container_name: grafana
+#    image: grafana/grafana
+#    ports:
+#      - 3000:3000
+#    environment:
+#      - GF_SECURITY_COOKIE_SECURE=true
+#      - GF_SECURITY_COOKIE_SAMESITE=none
+#      - GF_SECURITY_ALLOW_EMBEDDING=true
+#    networks:
+#      - spring-ai-alibaba-higress
+
 networks:
   spring-ai-alibaba-higress:
     driver: bridge
