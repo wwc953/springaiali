@@ -18,7 +18,7 @@ services:
 
   # Higress AI Cache Use
   redis:
-#    image: redis
+    #    image: redis
     image: higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/redis-stack-server:7.4.0-v3
     ports:
       - "6379:6379"
@@ -26,12 +26,12 @@ services:
       - TZ=Asia/Shanghai
     container_name: higress-redis
     volumes:
-#      - /d/docker-data/redis/data:/data
+      #      - /d/docker-data/redis/data:/data
       - ~/docker-data/redis/data:/data
-#      - ./conf/redis.conf:/etc/redis/redis-stand.conf
-#    command: redis-server /etc/redis/redis-stand.conf
+    #      - ./conf/redis.conf:/etc/redis/redis-stand.conf
+    #    command: redis-server /etc/redis/redis-stand.conf
     networks:
-        - spring-ai-alibaba-higress
+      - spring-ai-alibaba-higress
 
   higress:
     container_name: spring-ai-alibaba-higress
@@ -39,7 +39,7 @@ services:
     tty: true
     restart: unless-stopped
     volumes:
-#      - /d/docker-data/higress/data:/data #win
+      #      - /d/docker-data/higress/data:/data #win
       - ~/docker-data/higress/data:/data #mac
     image: higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/all-in-one:latest
     ports:
@@ -51,7 +51,7 @@ services:
 
   nacos:
     image: nacos/nacos-server:v3.1.1
-#    image: nacos-registry.cn-hangzhou.cr.aliyuncs.com/nacos/nacos-server:v3.0.1
+    #    image: nacos-registry.cn-hangzhou.cr.aliyuncs.com/nacos/nacos-server:v3.0.1
     container_name: nacos-standalone-3.1.1
     environment:
       - PREFER_HOST_MODE=hostname #获取服务实例的地址优先使用主机名
@@ -60,7 +60,7 @@ services:
       - NACOS_AUTH_IDENTITY_VALUE=security
       - NACOS_AUTH_TOKEN=VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg=
     volumes:
-#      - /d/docker-data/nacos3.1.1/standalone-logs/:/home/nacos/logs
+      #      - /d/docker-data/nacos3.1.1/standalone-logs/:/home/nacos/logs
       - ~/docker-data/nacos3.1.1/standalone-logs/:/home/nacos/logs
     ports:
       - "8080:8080"
@@ -69,26 +69,42 @@ services:
     networks:
       - spring-ai-alibaba-higress
 
-#  prometheus:
-#    container_name: prometheus
-#    image: prom/prometheus:latest
-#    ports:
-#      - "9090:9090"
-##    depends_on:
-##      - higress
-#    networks:
-#      - spring-ai-alibaba-higress
-#  grafana:
-#    container_name: grafana
-#    image: grafana/grafana
-#    ports:
-#      - 3000:3000
-#    environment:
-#      - GF_SECURITY_COOKIE_SECURE=true
-#      - GF_SECURITY_COOKIE_SAMESITE=none
-#      - GF_SECURITY_ALLOW_EMBEDDING=true
-#    networks:
-#      - spring-ai-alibaba-higress
+  #  prometheus:
+  #    container_name: prometheus
+  #    image: prom/prometheus:latest
+  #    ports:
+  #      - "9090:9090"
+  ##    depends_on:
+  ##      - higress
+  #    networks:
+  #      - spring-ai-alibaba-higress
+  #  grafana:
+  #    container_name: grafana
+  #    image: grafana/grafana
+  #    ports:
+  #      - 3000:3000
+  #    environment:
+  #      - GF_SECURITY_COOKIE_SECURE=true
+  #      - GF_SECURITY_COOKIE_SAMESITE=none
+  #      - GF_SECURITY_ALLOW_EMBEDDING=true
+  #    networks:
+  #      - spring-ai-alibaba-higress
+
+  app:
+    build:
+      context: ./../../mcp-server
+      dockerfile: Dockerfile
+    image: mcp-server-docker  # 指定镜像名称
+    container_name: mcp-server-docker  # 指定容器名称
+    ports:
+      - "27070:27070"
+#    volumes:
+#      - ./my-docker-app/logs:/logs
+    environment:
+      - JAVA_OPTS=-Xmx512m
+    networks:
+      - spring-ai-alibaba-higress
+
 
 networks:
   spring-ai-alibaba-higress:
