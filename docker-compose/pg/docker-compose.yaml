@@ -11,4 +11,5 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: mydb
     volumes:
-      - /d/docker-data/pgvecto_rs:/var/lib/postgresql/data
+#      - /d/docker-data/pgvecto_rs:/var/lib/postgresql/data
+      - ~/docker-data/pgvecto_rs:/var/lib/postgresql/data
