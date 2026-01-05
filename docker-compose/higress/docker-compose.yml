@@ -94,10 +94,10 @@ services:
     build:
       context: ./../../mcp-server
       dockerfile: Dockerfile
-    image: mcp-server-docker  # 指定镜像名称
+    image: mcp-server-image:v1.0  # 指定镜像名称
     container_name: mcp-server-docker  # 指定容器名称
     ports:
-      - "27070:27070"
+      - "17070:17070"
 #    volumes:
 #      - ./my-docker-app/logs:/logs
     environment:
