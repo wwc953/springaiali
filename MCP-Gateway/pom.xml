@@ -19,23 +19,24 @@
     </properties>
     <dependencies>
 
-        <!--        MCP Gateway Nacos-->
         <dependency>
-            <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter-mcp-gateway</artifactId>
-            <!--            <version>${spring-ai-extensions.version}</version>-->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-mcp-server-webmvc</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter-mcp-router</artifactId>
-         </dependency>
+            <artifactId>spring-ai-alibaba-starter-mcp-gateway</artifactId>
+        </dependency>
 
-        <!-- MCP Server WebFlux 支持（也可换成 WebMvc） -->
         <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-mcp-server-webflux</artifactId>
-            <!--            <version>${spring-ai.version}</version>-->
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
         </dependency>
 
     </dependencies>
