@@ -9,6 +9,7 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - xpack.monitoring.collection.enabled=true
+      - TZ=Asia/Shanghai
     volumes:
       - ~/docker-data/elasticsearch/data:/usr/share/elasticsearch/data
     ports:
@@ -21,6 +22,7 @@ services:
     image: docker.elastic.co/kibana/kibana:8.18.1
     container_name: kibana
     environment:
+      - i18n.locale=zh-CN  # 设置 Kibana 界面语言为中文
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
       - XPACK_SECURITY_ENABLED=false
