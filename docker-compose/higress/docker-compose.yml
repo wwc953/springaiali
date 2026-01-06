@@ -96,8 +96,8 @@ services:
       dockerfile: Dockerfile
     image: mcp-server-image:v1.0  # 指定镜像名称
     container_name: mcp-server-docker  # 指定容器名称
-    ports:
-      - "17070:17070"
+#    ports:
+#      - "17070:17070"
 #    volumes:
 #      - ./my-docker-app/logs:/logs
     environment:
