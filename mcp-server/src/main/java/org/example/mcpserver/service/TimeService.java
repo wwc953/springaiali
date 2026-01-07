@@ -1,5 +1,7 @@
 package org.example.mcpserver.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,8 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class TimeService {
 
+
+    private static final Logger log = LoggerFactory.getLogger(TimeService.class);
 
     @Tool(description = "根据经纬度获取天气预报")
     public String getWeatherForecastByLocation(
@@ -51,11 +55,14 @@ public class TimeService {
 
     @Tool(description = "获取当前时间")
     public String getCurrTime() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        log.info("getCurrTime time:{}", time);
+        return time;
     }
 
     @Tool(description = "获取地区天气情况")
     public String getWeaByCity(@ToolParam(description = "城市") String city) {
+        log.info("getWeaByCity city:{}", city);
         String res = "";
         if ("上海".equals(city)) {
             res = "晴天";
