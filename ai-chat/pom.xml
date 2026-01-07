@@ -78,6 +78,18 @@
             <artifactId>spring-ai-alibaba-starter-nacos-prompt</artifactId>
         </dependency>
 
+
+<!--        <dependency>-->
+<!--            &lt;!&ndash; spring 提供的可观测工具包，用于初始化 micrometer 组件 &ndash;&gt;-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-actuator</artifactId>-->
+<!--        </dependency>-->
+<!--        &lt;!&ndash; micrometer-opentelemetry 桥接器，用于将 micrometer 链路追踪代理到 opentelemetry &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>io.micrometer</groupId>-->
+<!--            <artifactId>micrometer-tracing-bridge-otel</artifactId>-->
+<!--        </dependency>-->
+
     </dependencies>
 
     <build>
