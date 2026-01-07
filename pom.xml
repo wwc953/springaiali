@@ -37,6 +37,7 @@
         <module>ai-chat</module>
         <module>mcp-server</module>
         <module>mcp-client</module>
+        <module>MCP-Gateway</module>
     </modules>
 
     <dependencyManagement>
