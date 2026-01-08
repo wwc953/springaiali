@@ -5,6 +5,24 @@ spring:
   application:
     name: webflux-streamable-mcp-gateway
   ai:
+    mcp:
+      server:
+        name: webflux-streamable-mcp-gateway
+        version: 1.0.0
+        enabled: true
+        protocol: streamable
+        type: ASYNC
+        instructions: "Nacos具网关"
+        streamable-http:
+          mcp-endpoint: /mcp
+          disallow-delete: true
+          keep-alive-interval: 30s
+        capabilities:
+          completion: true
+          resource: true
+          prompt: true
+          tool: true
+        request-timeout: 100s
     dashscope:
       api-key: ${DASHSCOPE_API_KEY}
     alibaba:
@@ -15,9 +33,9 @@ spring:
           nacos:
             service-names:
               - webflux-streamable-mcp-server
-          streamable:
-            enabled: true
-            endpoint: /streamable
+#          streamable:
+#            enabled: true
+#            endpoint: /streamable
         nacos:
           server-addr: 127.0.0.1:8848
           username: nacos
