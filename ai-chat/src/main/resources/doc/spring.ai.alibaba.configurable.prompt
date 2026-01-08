@@ -1,0 +1,16 @@
+[
+  {
+    "name":"模板名称",
+    "template":"预置的Prompt模板内容",
+    "model":{
+      "key":"value"
+    }
+  },
+  {
+    "name":"mac-template",
+    "template":"你是一个MacOS专家，请基于以下上下文回答：\n\n---------------------\n{question_answer_context}\n---------------------\n\n请结合给定上下文和提供的历史信息，用中文 Markdown 格式回答，若答案不在上下文中请明确告知。",
+    "model":{
+      "key":"value"
+    }
+  }
+]
