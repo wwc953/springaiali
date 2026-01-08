@@ -11,7 +11,7 @@ spring:
         version: 1.0.0
         enabled: true
         protocol: sse
-        type: async
+        type: SYNC
         instructions: "Nacos MCP Gateway 聚合多个 MCP Server 的工具网关"
         sse-message-endpoint: /mcp/message
         capabilities:
@@ -31,8 +31,7 @@ spring:
           # 配置要发现和聚合的 MCP Server 服务名称
           nacos:
             service-names:
-              - sse-mcp-server         # SSE 协议的 MCP Server
-#              - nacos-mcp-server-streamable  # Streamable 协议的 MCP Server
+              - sse-sync-mcp-server         # SSE 协议的 MCP Server
         # Nacos 注册中心配置
         nacos:
           #          namespace: 4ad3108b-4d44-43d0-9634-3c1ac4850c8c
