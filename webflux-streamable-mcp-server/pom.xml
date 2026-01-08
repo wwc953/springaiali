@@ -8,11 +8,11 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>org.sg</groupId>
-    <artifactId>webflux-sse-mcp-gateway</artifactId>
+    <groupId>org.example</groupId>
+    <artifactId>webflux-streamable-mcp-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>webflux-sse-mcp-gateway</name>
-    <description>webflux-sse-mcp-gateway</description>
+    <name>webflux-streamable-mcp-server</name>
+    <description>webflux-streamable-mcp-server</description>
     <url/>
     <licenses>
         <license/>
@@ -37,18 +37,7 @@
 
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter-mcp-gateway</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <artifactId>spring-ai-alibaba-starter-mcp-registry</artifactId>
         </dependency>
     </dependencies>
 
@@ -60,5 +49,25 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>

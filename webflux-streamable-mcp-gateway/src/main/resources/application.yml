@@ -1,0 +1,34 @@
+server:
+  port: 19000
+
+spring:
+  application:
+    name: webflux-streamable-mcp-gateway
+  ai:
+    dashscope:
+      api-key: ${DASHSCOPE_API_KEY}
+    alibaba:
+      mcp:
+        gateway:
+          enabled: true
+          registry: nacos
+          nacos:
+            service-names:
+              - webflux-streamable-mcp-server
+          streamable:
+            enabled: true
+            endpoint: /streamable
+        nacos:
+          server-addr: 127.0.0.1:8848
+          username: nacos
+          password: nacos
+
+
+# 调试日志
+logging:
+  level:
+    io:
+      modelcontextprotocol:
+        client: DEBUG
+        spec: DEBUG
+        server: DEBUG

@@ -40,6 +40,8 @@
         <module>MCP-Gateway</module>
         <module>webflux-sse-mcp-server</module>
         <module>webflux-sse-mcp-gateway</module>
+        <module>webflux-streamable-mcp-server</module>
+        <module>webflux-streamable-mcp-gateway</module>
     </modules>
 
     <dependencyManagement>
