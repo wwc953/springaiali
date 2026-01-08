@@ -53,24 +53,24 @@ public class TimeService {
                 "- 主要污染物: 无";
     }
 
-    @Tool(description = "获取当前时间")
-    public String getCurrTime() {
-        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        log.info("getCurrTime time:{}", time);
-        return time;
-    }
+//    @Tool(description = "获取当前时间")
+//    public String getCurrTime() {
+//        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+//        log.info("getCurrTime time:{}", time);
+//        return time;
+//    }
 
-    @Tool(description = "获取地区天气情况")
-    public String getWeaByCity(@ToolParam(description = "城市") String city) {
-        log.info("getWeaByCity city:{}", city);
-        String res = "";
-        if ("上海".equals(city)) {
-            res = "晴天";
-        }
-        if ("南京".equals(city)) {
-            res = "多云";
-        }
-        return res;
-    }
+//    @Tool(description = "获取地区天气情况")
+//    public String getWeaByCity(@ToolParam(description = "城市") String city) {
+//        log.info("getWeaByCity city:{}", city);
+//        String res = "";
+//        if ("上海".equals(city)) {
+//            res = "晴天";
+//        }
+//        if ("南京".equals(city)) {
+//            res = "多云";
+//        }
+//        return res;
+//    }
 
 }

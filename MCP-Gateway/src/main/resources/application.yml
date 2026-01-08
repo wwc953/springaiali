@@ -5,20 +5,6 @@ spring:
   application:
     name: mcp-gateway-server
   ai:
-    mcp:
-      server:
-        name: mcp-nacos-gateway-example
-        version: 1.0.0
-        enabled: true
-        protocol: sse
-        type: SYNC
-        instructions: "Nacos MCP Gateway 聚合多个 MCP Server 的工具网关"
-        sse-message-endpoint: /mcp/message
-        capabilities:
-          completion: false
-          resource: false
-          prompt: false
-          tool: true
     dashscope:
       api-key: ${DASHSCOPE_API_KEY}
 
@@ -32,9 +18,9 @@ spring:
           nacos:
             service-names:
               - sse-sync-mcp-server         # SSE 协议的 MCP Server
+              - webflux-sse-mcp-server
         # Nacos 注册中心配置
         nacos:
-          #          namespace: 4ad3108b-4d44-43d0-9634-3c1ac4850c8c
           server-addr: 127.0.0.1:8848
           username: nacos
           password: nacos
