@@ -38,6 +38,7 @@
         <module>mcp-server</module>
         <module>mcp-client</module>
         <module>MCP-Gateway</module>
+        <module>webflux-sse-mcp-server</module>
     </modules>
 
     <dependencyManagement>
