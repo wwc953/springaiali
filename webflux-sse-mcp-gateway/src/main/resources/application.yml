@@ -1,0 +1,45 @@
+server:
+  port: 19000
+
+spring:
+  application:
+    name: webflux-sse-mcp-gateway
+  ai:
+    mcp:
+      server:
+        name: webflux-sse-mcp-gateway
+        version: 1.0.0
+        enabled: true
+        protocol: sse
+        type: ASYNC
+        instructions: "Nacos MCP Gateway 聚合多个 MCP Server 的工具网关"
+        sse-message-endpoint: /mcp/message
+        capabilities:
+          completion: false
+          resource: false
+          prompt: false
+          tool: true
+    dashscope:
+      api-key: ${DASHSCOPE_API_KEY}
+
+    alibaba:
+      mcp:
+        gateway:
+          enabled: true
+          registry: nacos
+          nacos:
+            service-names:
+              - webflux-sse-mcp-server
+        nacos:
+          server-addr: 127.0.0.1:8848
+          username: nacos
+          password: nacos
+
+# 调试日志
+logging:
+  level:
+    io:
+      modelcontextprotocol:
+        client: DEBUG
+        spec: DEBUG
+        server: DEBUG
