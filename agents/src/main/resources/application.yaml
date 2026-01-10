@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: agents
+  ai:
+    # DashScope 配置（阿里云百炼）
+    dashscope:
+      api-key: ${DASHSCOPE_API_KEY}
+#    chat:
+#      options:
+#        model: ${DASHSCOPE_MODEL:qwen-plus}
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.alibaba.cloud.ai: DEBUG
+    org.springframework.ai: DEBUG
