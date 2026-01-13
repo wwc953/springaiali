@@ -7,7 +7,9 @@ spring:
   ai:
     dashscope:
       api-key: ${DASHSCOPE_API_KEY}
-
+      chat:
+        options:
+          model: deepseek-v3.2
     alibaba:
       mcp:
         # MCP Gateway 配置

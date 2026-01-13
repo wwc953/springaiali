@@ -25,6 +25,9 @@ spring:
         request-timeout: 100s
     dashscope:
       api-key: ${DASHSCOPE_API_KEY}
+    chat:
+      options:
+        model: deepseek-v3.2
     alibaba:
       mcp:
         gateway:

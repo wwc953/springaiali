@@ -1,11 +1,12 @@
 spring:
-  application:
-    name: mcp-distributed-client
   main:
     web-application-type: none
   ai:
     dashscope:
       api-key: ${DASHSCOPE_API_KEY}
+      chat:
+        options:
+          model: deepseek-v3.2
     mcp:
       client:
         enabled: true

@@ -5,12 +5,11 @@ spring:
   application:
     name: agents
   ai:
-    # DashScope 配置（阿里云百炼）
     dashscope:
       api-key: ${DASHSCOPE_API_KEY}
-#    chat:
-#      options:
-#        model: ${DASHSCOPE_MODEL:qwen-plus}
+    chat:
+      options:
+        model: deepseek-v3.2
 
 # 日志配置
 logging:
