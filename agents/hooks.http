@@ -1,0 +1,7 @@
+#第一个
+GET http://127.0.0.1:8080/hooks/chat
+#?question=你是谁,请给出百度的网址&question2=写一首关于春天的五言绝句
+
+
+
+
