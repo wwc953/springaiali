@@ -4,21 +4,27 @@ import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
 import com.alibaba.cloud.ai.dashscope.spec.DashScopeModel;
+import com.alibaba.cloud.ai.graph.NodeOutput;
 import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.RunnableConfig;
 import com.alibaba.cloud.ai.graph.agent.ReactAgent;
+import com.alibaba.cloud.ai.graph.agent.interceptor.toolerror.ToolErrorInterceptor;
 import com.alibaba.cloud.ai.graph.checkpoint.savers.MemorySaver;
 import com.alibaba.cloud.ai.graph.exception.GraphRunnerException;
+import com.alibaba.cloud.ai.graph.streaming.OutputType;
+import com.alibaba.cloud.ai.graph.streaming.StreamingOutput;
 import com.alibaba.fastjson.JSON;
 import org.example.agents.service.SearchTool;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.ToolResponseMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,10 +34,10 @@ import java.util.Optional;
 @RequestMapping("/agents")
 public class AgentsController {
 
-    String model= "deepseek-v3.2";
+    String model = "qwen3.7-max";
 
     @GetMapping("/chat")
-    public void chat( ) throws GraphRunnerException {
+    public void chat() throws GraphRunnerException {
         // 创建 DashScope API 实例
         DashScopeApi dashScopeApi = DashScopeApi.builder()
                 .apiKey(System.getenv("AI_DASHSCOPE_API_KEY"))
@@ -85,13 +91,61 @@ public class AgentsController {
                 .tools(searchTool)
                 .systemPrompt("你是一个专业的技术助手。请准确、简洁地回答问题。")
                 .instruction(instruction)// 更详细的指令
+                .interceptors(new ToolErrorInterceptor())//ToolErrorInterceptor 工具错误处理 可继承ToolInterceptor自定义
                 .saver(new MemorySaver())// 配置记忆内存存储
                 .build();
 
-        AssistantMessage call = agent.call("我叫张三", runnableConfig);
-        System.out.println(call);
-        AssistantMessage text1 = agent.call("我叫什么名字？并请给出百度的网址", runnableConfig);// 输出: "你叫张三"
-        System.out.println(text1);
+        // 流式输出
+        Flux<NodeOutput> stream = agent.stream("帮我写一首诗", runnableConfig);
+
+        stream.subscribe(
+                output -> {
+                    // 结合 OutputType 和消息类型进行处理
+                    if (output instanceof StreamingOutput streamingOutput) {
+                        OutputType type = streamingOutput.getOutputType();
+                        Message message = streamingOutput.message();
+
+                        // 处理模型流式输出
+                        if (type == OutputType.AGENT_MODEL_STREAMING) {
+                            if (message instanceof AssistantMessage assistantMessage) {
+                                // 检查是否为 Thinking 消息
+                                Object reasoningContent = assistantMessage.getMetadata().get("reasoningContent");
+                                if (reasoningContent != null && !reasoningContent.toString().isEmpty()) {
+                                    System.out.print("[Thinking] " + reasoningContent);
+                                } else {
+                                    // 普通模型响应（增量内容）
+                                    System.out.print(assistantMessage.getText());
+                                }
+                            }
+                        }
+                        // 处理模型输出完成
+                        else if (type == OutputType.AGENT_MODEL_FINISHED) {
+                            if (message instanceof AssistantMessage assistantMessage) {
+                                if (assistantMessage.hasToolCalls()) {
+                                    // 工具调用请求
+                                    assistantMessage.getToolCalls().forEach(toolCall -> {
+                                        System.out.println("[Tool Call] " + toolCall.name() + ": " + toolCall.arguments());
+                                    });
+                                } else {
+                                    // 模型完整响应
+                                    System.out.println("\n[Model Finished]");
+                                }
+                            }
+                        }
+                        // 处理工具执行结果
+                        else if (type == OutputType.AGENT_TOOL_FINISHED) {
+                            if (message instanceof ToolResponseMessage toolResponse) {
+                                toolResponse.getResponses().forEach(response -> {
+                                    System.out.println("[Tool Result] " + response.name() + ": " + response.responseData());
+                                });
+                            }
+                        }
+                    }
+                },
+                error -> System.err.println("错误: " + error.getMessage()),
+                () -> System.out.println("流式输出完成end")
+        );
+
     }
 
     @GetMapping("/chatTwo")

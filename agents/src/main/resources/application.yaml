@@ -9,7 +9,7 @@ spring:
       api-key: ${DASHSCOPE_API_KEY}
     chat:
       options:
-        model: deepseek-v3.2
+        model: qwen3.7-max
 
 # 日志配置
 logging:
