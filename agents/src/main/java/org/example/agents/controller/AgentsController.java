@@ -9,7 +9,10 @@ import com.alibaba.cloud.ai.graph.RunnableConfig;
 import com.alibaba.cloud.ai.graph.agent.ReactAgent;
 import com.alibaba.cloud.ai.graph.agent.interceptor.toolerror.ToolErrorInterceptor;
 import com.alibaba.cloud.ai.graph.checkpoint.savers.MemorySaver;
+import com.alibaba.cloud.ai.graph.checkpoint.savers.file.FileSystemSaver;
+import com.alibaba.cloud.ai.graph.checkpoint.savers.redis.RedisSaver;
 import com.alibaba.cloud.ai.graph.exception.GraphRunnerException;
+import com.alibaba.cloud.ai.graph.serializer.plain_text.jackson.JacksonStateSerializer;
 import com.alibaba.cloud.ai.graph.streaming.OutputType;
 import com.alibaba.cloud.ai.graph.streaming.StreamingOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,6 +21,8 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.agents.interceptor.DynamicPromptInterceptor;
 import org.example.agents.service.SearchTool;
+import org.redisson.Redisson;
+import org.redisson.codec.JsonJacksonCodec;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.ToolResponseMessage;
@@ -165,6 +170,10 @@ public class AgentsController {
 
     }
 
+    @Resource
+    Redisson redisson;
+
+
     @GetMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> chat(@RequestParam(value = "umsg", required = false) String umsg,
                                               HttpServletResponse httpServletResponse) throws GraphRunnerException {
@@ -197,9 +206,13 @@ public class AgentsController {
 
 
         // 使用 thread_id 维护对话上下文
+        // 1. 构建配置：标记用户和请求来源
         RunnableConfig runnableConfig = RunnableConfig.builder()
                 .threadId("user_123")
-//                .addMetadata("key", "value")
+//                .addMetadata("user_id", "10086")
+//                .addMetadata("request_source", "mobile_app")
+//                .addMetadata("max_retries", 3)    // 自定义重试次数
+//                .addMetadata("timeout_seconds", 30)
                 .build();
 
 
@@ -221,20 +234,20 @@ public class AgentsController {
                 .model(chatModel)
                 .tools(searchTool)
                 .systemPrompt("你是一个专业的技术助手。请准确、简洁地回答问题。")
-                .instruction(instruction)// 更详细的指令
+//                .instruction(instruction)// 更详细的指令
                 .interceptors(new ToolErrorInterceptor())//ToolErrorInterceptor 工具错误处理 可继承ToolInterceptor自定义
                 .interceptors(new DynamicPromptInterceptor())//动态提示词
-                .saver(new MemorySaver())// 配置记忆内存存储
+                .saver(RedisSaver.builder().redisson(redisson).build())// 配置记忆内存存储
                 .build();
 
         // 多个消息
-        List<Message> messages = List.of(
-                new UserMessage("我想了解 Java 多线程"),
-                new UserMessage("特别是线程池的使用")
-        );
+//        List<Message> messages = List.of(
+//                new UserMessage("我想了解 Java 多线程"),
+//                new UserMessage("特别是线程池的使用")
+//        );
 
         // 流式输出
-        return agent.stream(messages, runnableConfig)
+        return agent.stream(umsg, runnableConfig)
                 .map(nodeOutput -> {
                             // 当前执行的节点名称
                             String node = nodeOutput.node();

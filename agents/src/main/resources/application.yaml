@@ -10,6 +10,12 @@ spring:
     chat:
       options:
         model: qwen3.7-max
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+      timeout: 3000
 
 # 日志配置
 logging:
