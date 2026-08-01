@@ -1,0 +1,32 @@
+{
+  "node": "_AGENT_MODEL_",
+  "agent": "my_agent",
+  "tokenUsage": {
+    "completionTokens": 962,
+    "promptTokens": 354,
+    "totalTokens": 1316,
+    "nativeUsage": {
+      "output_tokens": 962,
+      "input_tokens": 354,
+      "total_tokens": 1316,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    }
+  },
+  "message": {
+    "messageType": "ASSISTANT",
+    "metadata": {
+      "finishReason": "STOP",
+      "search_info": "",
+      "role": "ASSISTANT",
+      "id": "8f7cbd4c-0911-963c-8d76-2989912c73a8",
+      "messageType": "ASSISTANT",
+      "reasoningContent": ""
+    },
+    "toolCalls": [],
+    "media": [],
+    "text": ""
+  },
+  "chunk": ""
+}

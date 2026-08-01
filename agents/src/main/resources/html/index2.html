@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>ReactAgent 流式输出</title>
+</head>
+<body>
+<div id="output" style="white-space: pre-wrap; font-family: monospace;"></div>
+<button onclick="startStream()">开始流式对话</button>
+<button onclick="stopStream()">停止</button>
+
+<script>
+    let eventSource = null;
+
+    function startStream() {
+        if (eventSource) {
+            eventSource.close();
+        }
+        document.getElementById('output').innerText = '';
+
+        eventSource = new EventSource('http://localhost:8080/agents/chat?usmg=请介绍一下Spring AI Alibaba');
+
+        eventSource.onmessage = (event) => {
+            try {
+                console.log('event==>', event);
+                const data = JSON.parse(event.data);
+                if (data) {
+                    const outputDiv = document.getElementById('output');
+                    if (data.message.metadata.finishReason === 'STOP') {
+                        console.log('流式输出完成');
+                        // 可在此处关闭连接
+                        eventSource.close();
+                    } else {
+                        outputDiv.innerText += data.chunk;
+                    }
+                }
+
+            } catch (e) {
+                console.error('解析数据失败:', e);
+            }
+        };
+
+        eventSource.onerror = (error) => {
+            console.error('SSE 连接错误:', error);
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+        };
+    }
+
+    function stopStream() {
+        if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+            console.log('已停止流式接收');
+        }
+    }
+</script>
+</body>
+</html>
