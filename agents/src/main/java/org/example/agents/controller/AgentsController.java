@@ -14,16 +14,16 @@ import com.alibaba.cloud.ai.graph.exception.GraphRunnerException;
 import com.alibaba.cloud.ai.graph.streaming.OutputType;
 import com.alibaba.cloud.ai.graph.streaming.StreamingOutput;
 import com.alibaba.fastjson.JSON;
+import org.example.agents.interceptor.DynamicPromptInterceptor;
 import org.example.agents.service.SearchTool;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.ToolResponseMessage;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.function.FunctionToolCallback;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class AgentsController {
     String model = "qwen3.7-max";
 
     @GetMapping("/chat")
-    public void chat() throws GraphRunnerException {
+    public void chat(@RequestParam("umsg") String umsg) throws GraphRunnerException {
         // 创建 DashScope API 实例
         DashScopeApi dashScopeApi = DashScopeApi.builder()
                 .apiKey(System.getenv("AI_DASHSCOPE_API_KEY"))
@@ -52,7 +52,7 @@ public class AgentsController {
                         .temperature(0.7)      // 控制随机性
                         .maxToken(2000)       // 最大输出长度
                         .topP(0.9)            // 核采样参数
-//                        .enableThinking(true)
+                        .enableThinking(false)//是否开启思考模式，默认开启
                         .build())
                 .build();
 
@@ -92,11 +92,18 @@ public class AgentsController {
                 .systemPrompt("你是一个专业的技术助手。请准确、简洁地回答问题。")
                 .instruction(instruction)// 更详细的指令
                 .interceptors(new ToolErrorInterceptor())//ToolErrorInterceptor 工具错误处理 可继承ToolInterceptor自定义
+                .interceptors(new DynamicPromptInterceptor())//动态提示词
                 .saver(new MemorySaver())// 配置记忆内存存储
                 .build();
 
+        // 多个消息
+        List<Message> messages = List.of(
+                new UserMessage("我想了解 Java 多线程"),
+                new UserMessage("特别是线程池的使用")
+        );
+
         // 流式输出
-        Flux<NodeOutput> stream = agent.stream("帮我写一首诗", runnableConfig);
+        Flux<NodeOutput> stream = agent.stream(messages, runnableConfig);
 
         stream.subscribe(
                 output -> {
