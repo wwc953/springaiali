@@ -3,7 +3,6 @@ package org.example.agents.config;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
-import com.alibaba.cloud.ai.dashscope.spec.DashScopeModel;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,12 +20,11 @@ public class AiConfig {
     }
 
     @Bean
-    public ChatModel qwenChatModel(DashScopeApi dashScopeApi) {
+    public DashScopeChatModel qwenChatModel(DashScopeApi dashScopeApi) {
         // 创建 ChatModel
-        ChatModel chatModel = DashScopeChatModel.builder()
+        DashScopeChatModel dashScopeChatModel = DashScopeChatModel.builder()
                 .dashScopeApi(dashScopeApi)
                 .defaultOptions(DashScopeChatOptions.builder()
-//                        .model(DashScopeModel.ChatModel.DEEPSEEK_V3.getValue())
                         .model("qwen3.7-max")
                         .temperature(0.7)      // 控制随机性
                         .maxToken(2000)       // 最大输出长度
@@ -34,7 +32,7 @@ public class AiConfig {
                         .enableThinking(false)//是否开启思考模式，默认开启
                         .build())
                 .build();
-        return chatModel;
+        return dashScopeChatModel;
     }
 
 }

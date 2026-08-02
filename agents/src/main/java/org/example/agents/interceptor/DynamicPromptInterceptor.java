@@ -5,10 +5,12 @@ import com.alibaba.cloud.ai.graph.agent.interceptor.ModelInterceptor;
 import com.alibaba.cloud.ai.graph.agent.interceptor.ModelRequest;
 import com.alibaba.cloud.ai.graph.agent.interceptor.ModelResponse;
 import org.springframework.ai.chat.messages.SystemMessage;
+import org.springframework.stereotype.Component;
 
 /**
  * 动态 System Prompt
  */
+@Component
 public class DynamicPromptInterceptor extends ModelInterceptor {
     @Override
     public ModelResponse interceptModel(ModelRequest request, ModelCallHandler handler) {

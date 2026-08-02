@@ -267,11 +267,11 @@
         // ---------- 辅助函数 ----------
         function setStatus(state, message) {
             statusIndicator.className = 'status-indicator';
-            if (state === 'connected') {
-                statusIndicator.classList.add('connected');
-            } else if (state === 'error') {
-                statusIndicator.classList.add('error');
-            }
+            // if (state === 'connected') {
+            //     statusIndicator.classList.add('connected');
+            // } else if (state === 'error') {
+            //     statusIndicator.classList.add('error');
+            // }
             statusText.textContent = message;
         }
 
