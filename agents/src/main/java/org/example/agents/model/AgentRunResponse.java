@@ -1,4 +1,4 @@
-package org.example.agents.controller;
+package org.example.agents.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.ai.chat.messages.AbstractMessage;

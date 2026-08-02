@@ -18,7 +18,7 @@
         }
         document.getElementById('output').innerText = '';
 
-        eventSource = new EventSource('http://localhost:8080/agents/chat?usmg=请介绍一下Spring AI Alibaba');
+        eventSource = new EventSource('http://localhost:8080/agents/chat?umsg=请介绍一下Spring AI Alibaba');
 
         eventSource.onmessage = (event) => {
             try {
