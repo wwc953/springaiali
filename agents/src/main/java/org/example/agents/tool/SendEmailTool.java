@@ -1,16 +1,16 @@
-package org.example.agents.service;
+package org.example.agents.tool;
 
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Component;
+
 import java.util.function.BiFunction;
 
-@Component
-public class SearchTool implements BiFunction<String, ToolContext, String> {
+ public class SendEmailTool implements BiFunction<String, ToolContext, String> {
     @Override
     public String apply(
-            @ToolParam(description = "搜索关键词") String query,
+            @ToolParam(description = "发送电子邮件") String email,
             ToolContext toolContext) {
-        return "搜索结果：" + query;
+        return "发送成功：" + email;
     }
 }

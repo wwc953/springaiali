@@ -6,32 +6,40 @@ import com.alibaba.cloud.ai.graph.agent.hook.HookPositions;
 import com.alibaba.cloud.ai.graph.agent.hook.messages.AgentCommand;
 import com.alibaba.cloud.ai.graph.agent.hook.messages.MessagesModelHook;
 import com.alibaba.cloud.ai.graph.agent.hook.messages.UpdatePolicy;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-// 2. MessagesModelHook - 在模型调用前后执行（例如：消息修剪），专门用于操作消息列表，使用更简单，更推荐。
-// 区别于AgentHook，MessagesModelHook在一次agent调用中可能会调用多次，也就是每次 reasoning-acting 迭代都会执行
+/**
+ * MessagesModelHook - 在模型调用前修剪消息
+ * 使用 MessagesModelHook 实现，在模型调用前修剪消息列表，只保留最后 MAX_MESSAGES 条消息
+ */
+@Component
+@Slf4j
 @HookPositions({HookPosition.BEFORE_MODEL})
-public class MessageTrimmingHook extends MessagesModelHook {
-    private static final int MAX_MESSAGES = 10;
+public class SimpleMessageTrimmingHook extends MessagesModelHook {
+    private static final int MAX_MESSAGES = 3;
 
     @Override
     public String getName() {
-        return "message_trimming";
+        return "simple_message_trimming_MessagesModelHook";
     }
 
     @Override
     public AgentCommand beforeModel(List<Message> previousMessages, RunnableConfig config) {
+        log.info("previousMessages长度：{}", previousMessages.size());
+        // 如果消息数量超过限制，只保留最后 MAX_MESSAGES 条消息
         if (previousMessages.size() > MAX_MESSAGES) {
-            // 只保留最后 MAX_MESSAGES 条消息
             List<Message> trimmedMessages = previousMessages.subList(
                     previousMessages.size() - MAX_MESSAGES,
                     previousMessages.size()
             );
+            // 使用 REPLACE 策略替换所有消息
             return new AgentCommand(trimmedMessages, UpdatePolicy.REPLACE);
         }
-        // 消息数量未超过限制，直接返回原消息列表
+        // 如果消息数量未超过限制，返回原始消息（不进行修改）
         return new AgentCommand(previousMessages);
     }
 }
