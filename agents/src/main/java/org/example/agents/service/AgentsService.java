@@ -11,6 +11,7 @@ import com.alibaba.cloud.ai.graph.agent.hook.pii.PIIType;
 import com.alibaba.cloud.ai.graph.agent.hook.pii.RedactionStrategy;
 import com.alibaba.cloud.ai.graph.agent.hook.summarization.SummarizationHook;
 import com.alibaba.cloud.ai.graph.agent.interceptor.Interceptor;
+import com.alibaba.cloud.ai.graph.agent.interceptor.contextediting.ContextEditingInterceptor;
 import com.alibaba.cloud.ai.graph.agent.interceptor.todolist.TodoListInterceptor;
 import com.alibaba.cloud.ai.graph.agent.interceptor.toolretry.ToolRetryInterceptor;
 import com.alibaba.cloud.ai.graph.agent.interceptor.toolselection.ToolSelectionInterceptor;
@@ -51,9 +52,9 @@ public class AgentsService {
     @Resource
     DynamicPromptInterceptor dynamicPromptInterceptor;
     @Resource
-    ContentModerationInterceptor guardrailInterceptor;
+    ContentModerationInterceptor contentModerationInterceptor;
     @Resource
-    ToolCacheInterceptor myToolErrorInterceptor;
+    ToolCacheInterceptor toolCacheInterceptor;
     @Resource
     ToolMonitoringInterceptor toolMonitoringInterceptor;
     @Resource
@@ -198,9 +199,20 @@ public class AgentsService {
          */
         ToolSelectionInterceptor toolSelectionInterceptor = ToolSelectionInterceptor.builder().selectionModel(qwenChatModel).build();
 
-        List<Interceptor> interceptorList = List.of(dynamicPromptInterceptor, guardrailInterceptor, myToolErrorInterceptor, toolMonitoringInterceptor,
-                toolRetryInterceptor, todoListInterceptor, toolSelectionInterceptor,
-                new ModelMonitoringInterceptor());
+        /**
+         * 当上下文窗口token太多时，从对话历史中删除不相关或冗余的tool调用信息，
+         */
+        ContextEditingInterceptor contextEditingInterceptor = ContextEditingInterceptor.builder()
+                .trigger(120000)//上下文窗口token最大值
+                .keep(3)//只保留3个工具
+                .clearAtLeast(60000)//至少清除多少token的tool结果
+                .build();
+
+        ModelMonitoringInterceptor monitoringInterceptor = new ModelMonitoringInterceptor();
+
+        List<Interceptor> interceptorList = List.of(monitoringInterceptor, contextEditingInterceptor,
+                dynamicPromptInterceptor, todoListInterceptor, contentModerationInterceptor
+                , toolCacheInterceptor, toolSelectionInterceptor, toolMonitoringInterceptor, toolRetryInterceptor);
 
         // 创建 Agent
         ReactAgent agent = ReactAgent.builder()
