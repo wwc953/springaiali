@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 @HookPositions({HookPosition.BEFORE_MODEL})
 public class SimpleMessageTrimmingHook extends MessagesModelHook {
-    private static final int MAX_MESSAGES = 3;
+    private static final int MAX_MESSAGES = 10;
 
     @Override
     public String getName() {

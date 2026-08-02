@@ -21,6 +21,7 @@ import com.alibaba.cloud.ai.graph.streaming.OutputType;
 import com.alibaba.cloud.ai.graph.streaming.StreamingOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.modelcontextprotocol.json.TypeRef;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,8 @@ import org.example.agents.hook.CustomModelHook;
 import org.example.agents.hook.SimpleMessageTrimmingHook;
 import org.example.agents.interceptor.*;
 import org.example.agents.model.AgentRunResponse;
+import org.example.agents.model.UserPreferenceStore;
+import org.example.agents.model.UserPreferences;
 import org.example.agents.tool.SearchTool;
 import org.example.agents.tool.SendEmailTool;
 import org.redisson.Redisson;
@@ -66,10 +69,10 @@ public class AgentsService {
     ChatModel qwenChatModel;
 
     @Resource
-    AgentLoggingHook loggingHook;
+    AgentLoggingHook agentLoggingHook;
 
     @Resource
-    SimpleMessageTrimmingHook messageTrimmingHook;
+    SimpleMessageTrimmingHook simpleMessageTrimmingHook;
 
     @Resource
     CustomModelHook customModelHook;
@@ -117,11 +120,11 @@ public class AgentsService {
                 保持专业、友好的语气。
                 """;
 
-        // 内置的消息压缩 Hook
+        // 消息总结 Hook
         SummarizationHook summarizationHook = SummarizationHook.builder()
                 .model(qwenChatModel)
-                .maxTokensBeforeSummary(4000)//触发摘要之前的最大 token 数
-                .messagesToKeep(20)//摘要后保留的最新消息数
+                .maxTokensBeforeSummary(4000)//在 4000 tokens 时触发总结
+                .messagesToKeep(20)//总结后保留最后 20 条消息
                 .build();
 
         // 创建 Human-in-the-Loop Hook 暂停 Agent 执行以获得人工批准、编辑或拒绝工具调用
@@ -158,7 +161,7 @@ public class AgentsService {
                 .applyToInput(true)
                 .build();
 
-        List<Hook> hookList = List.of(loggingHook, messageTrimmingHook, summarizationHook, humanReviewHook, modelCallLimitHook, pii, customModelHook,
+        List<Hook> hookList = List.of(agentLoggingHook, simpleMessageTrimmingHook, summarizationHook, humanReviewHook, modelCallLimitHook, pii, customModelHook,
                 new AdvancedMessageTrimmingHook());
 
 
@@ -210,7 +213,12 @@ public class AgentsService {
 
         ModelMonitoringInterceptor monitoringInterceptor = new ModelMonitoringInterceptor();
 
-        List<Interceptor> interceptorList = List.of(monitoringInterceptor, contextEditingInterceptor,
+        UserPreferenceStore store = new UserPreferenceStore();
+        store.savePreferences(runnableConfig.metadata("user_id").orElse("root").toString(),
+                new UserPreferences("友好轻松", "英文", List.of("技术", "阅读")));
+        PersonalizedPromptInterceptor personalizedPromptInterceptor = new PersonalizedPromptInterceptor(store);
+
+        List<Interceptor> interceptorList = List.of(monitoringInterceptor, personalizedPromptInterceptor, contextEditingInterceptor,
                 dynamicPromptInterceptor, todoListInterceptor, contentModerationInterceptor
                 , toolCacheInterceptor, toolSelectionInterceptor, toolMonitoringInterceptor, toolRetryInterceptor);
 

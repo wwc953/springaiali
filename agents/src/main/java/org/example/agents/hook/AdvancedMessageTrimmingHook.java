@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 
 @HookPositions({HookPosition.BEFORE_MODEL})
 public class AdvancedMessageTrimmingHook extends ModelHook {
-    private static final int MAX_MESSAGES = 2;
+    private static final int MAX_MESSAGES = 10;
     private static final String TRIM_COUNT_KEY = "trim_count";
     private static final Logger log = LoggerFactory.getLogger(AdvancedMessageTrimmingHook.class);
 
