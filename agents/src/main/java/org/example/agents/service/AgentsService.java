@@ -27,10 +27,7 @@ import org.example.agents.hook.AdvancedMessageTrimmingHook;
 import org.example.agents.hook.AgentLoggingHook;
 import org.example.agents.hook.CustomModelHook;
 import org.example.agents.hook.SimpleMessageTrimmingHook;
-import org.example.agents.interceptor.DynamicPromptInterceptor;
-import org.example.agents.interceptor.GuardrailInterceptor;
-import org.example.agents.interceptor.MyToolErrorInterceptor;
-import org.example.agents.interceptor.ToolMonitoringInterceptor;
+import org.example.agents.interceptor.*;
 import org.example.agents.model.AgentRunResponse;
 import org.example.agents.tool.SearchTool;
 import org.example.agents.tool.SendEmailTool;
@@ -54,9 +51,9 @@ public class AgentsService {
     @Resource
     DynamicPromptInterceptor dynamicPromptInterceptor;
     @Resource
-    GuardrailInterceptor guardrailInterceptor;
+    ContentModerationInterceptor guardrailInterceptor;
     @Resource
-    MyToolErrorInterceptor myToolErrorInterceptor;
+    ToolCacheInterceptor myToolErrorInterceptor;
     @Resource
     ToolMonitoringInterceptor toolMonitoringInterceptor;
     @Resource
@@ -202,7 +199,8 @@ public class AgentsService {
         ToolSelectionInterceptor toolSelectionInterceptor = ToolSelectionInterceptor.builder().selectionModel(qwenChatModel).build();
 
         List<Interceptor> interceptorList = List.of(dynamicPromptInterceptor, guardrailInterceptor, myToolErrorInterceptor, toolMonitoringInterceptor,
-                toolRetryInterceptor, todoListInterceptor, toolSelectionInterceptor);
+                toolRetryInterceptor, todoListInterceptor, toolSelectionInterceptor,
+                new ModelMonitoringInterceptor());
 
         // 创建 Agent
         ReactAgent agent = ReactAgent.builder()

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -25,12 +26,17 @@ public class AgentLoggingHook extends AgentHook {
     @Override
     public CompletableFuture<Map<String, Object>> beforeAgent(OverAllState state, RunnableConfig config) {
         log.info("Agent 开始执行");
-        return CompletableFuture.completedFuture(Map.of());
+        return CompletableFuture.completedFuture(Map.of("start_time", System.currentTimeMillis()));
     }
 
     @Override
     public CompletableFuture<Map<String, Object>> afterAgent(OverAllState state, RunnableConfig config) {
         log.info("Agent 执行完成");
+        Optional<Object> startTime = state.value("start_time");
+        if (startTime.isPresent()) {
+            long duration = System.currentTimeMillis() - (Long) startTime.get();
+            log.info("Agent 执行耗时: " + duration + "ms");
+        }
         return CompletableFuture.completedFuture(Map.of());
     }
 
