@@ -43,7 +43,7 @@ public class AgentRunResponse {
      * 无参构造函数
      * 供 Jackson 反序列化使用
      */
-    AgentRunResponse() {
+    public AgentRunResponse() {
     }
 
     /**

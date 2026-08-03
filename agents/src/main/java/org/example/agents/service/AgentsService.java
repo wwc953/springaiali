@@ -21,7 +21,6 @@ import com.alibaba.cloud.ai.graph.streaming.OutputType;
 import com.alibaba.cloud.ai.graph.streaming.StreamingOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.modelcontextprotocol.json.TypeRef;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.example.agents.hook.AdvancedMessageTrimmingHook;
@@ -42,8 +41,6 @@ import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.function.FunctionToolCallback;
-import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -77,7 +74,13 @@ public class AgentsService {
     @Resource
     CustomModelHook customModelHook;
 
-    public Flux<ServerSentEvent<String>> chatAgent(String umsg ) throws GraphRunnerException {
+    /**
+     * 返回自定义对象
+     * @param umsg
+     * @return AgentRunResponse
+     * @throws GraphRunnerException
+     */
+    public Flux<AgentRunResponse> chatAgent(String umsg) throws GraphRunnerException {
         log.info("umsg==>{}", umsg);
         // 创建工具回调
         ToolCallback searchTool = FunctionToolCallback
@@ -249,7 +252,7 @@ public class AgentsService {
                             // Token 消耗统计
                             Usage tokenUsage = nodeOutput.tokenUsage();
                             // 最终返回给前端的响应对象
-                            AgentRunResponse agentResponse = null;
+                            AgentRunResponse agentResponse = new AgentRunResponse();
 
                             // ====================== 处理流式输出 ======================
                             if (nodeOutput instanceof StreamingOutput<?> streamingOutput) {
@@ -259,7 +262,7 @@ public class AgentsService {
 
                                 // 无消息内容时返回空 JSON
                                 if (message == null) {
-                                    return ServerSentEvent.<String>builder().data("{}").build();
+                                    return agentResponse;
                                 }
 
                                 // 处理模型流式输出
@@ -310,19 +313,16 @@ public class AgentsService {
                                 }
                             }
 //                            return ServerSentEvent.<String>builder().data("").build();
-                            try {
-                                if (agentResponse != null) {
-                                    // 对象转 JSON 字符串
-                                    String jsonData = mapper.writeValueAsString(agentResponse);
-                                    // 封装成标准 SSE 事件返回
-                                    return ServerSentEvent.<String>builder().data(jsonData).build();
-
-                                }
-                            } catch (JsonProcessingException e) {
-                                throw new RuntimeException(e);
-                            }
+//                            try {
+//                                if (agentResponse != null) {
+//                                    // 对象转 JSON 字符串
+//                                    return mapper.writeValueAsString(agentResponse);
+//                                }
+//                            } catch (JsonProcessingException e) {
+//                                throw new RuntimeException(e);
+//                            }
                             // 默认空消息
-                            return ServerSentEvent.<String>builder().data("{}").build();
+                            return agentResponse;
                         }
                 );
     }
