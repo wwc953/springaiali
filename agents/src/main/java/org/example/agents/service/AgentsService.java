@@ -23,7 +23,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.modelcontextprotocol.json.TypeRef;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.example.agents.hook.AdvancedMessageTrimmingHook;
 import org.example.agents.hook.AgentLoggingHook;
@@ -44,6 +43,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -77,10 +77,8 @@ public class AgentsService {
     @Resource
     CustomModelHook customModelHook;
 
-    public Flux<ServerSentEvent<String>> chatAgent(String umsg, HttpServletResponse httpServletResponse) throws GraphRunnerException {
+    public Flux<ServerSentEvent<String>> chatAgent(String umsg ) throws GraphRunnerException {
         log.info("umsg==>{}", umsg);
-        httpServletResponse.setCharacterEncoding("UTF-8");
-
         // 创建工具回调
         ToolCallback searchTool = FunctionToolCallback
                 .builder("search", new SearchTool())
