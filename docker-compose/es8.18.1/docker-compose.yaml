@@ -10,8 +10,8 @@ services:
       - xpack.security.enabled=false
       - xpack.monitoring.collection.enabled=true
       - TZ=Asia/Shanghai
-    volumes:
-      - ~/docker-data/elasticsearch/data:/usr/share/elasticsearch/data
+#    volumes:
+#      - ~/docker-data/elasticsearch/data:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
       - "9300:9300"
